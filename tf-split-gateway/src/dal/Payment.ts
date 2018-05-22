@@ -4,6 +4,8 @@ import { PaymentState, InitialPaymentStates } from "../types/payment";
 import { User } from './User';
 import { PaymentRepositoryToken } from './token-constants';
 import { Split } from './Split';
+import { ApiError } from '../utils/error';
+import { API_ERRORS } from '../types/app.errors';
 
 
 /**
@@ -21,6 +23,19 @@ import { Split } from './Split';
   next();
 })
 
+/**
+ * Make sure that splits is valid
+ */
+@pre<Payment>('save', function(next) {
+  const payment = this;
+
+  if (!this.isSplitsValid()) {
+    const error = new ApiError(API_ERRORS.VALIDATION_ERROR);
+    return next(error);
+  }
+
+  next();
+})
 
 export class Payment extends Typegoose {
 
@@ -47,16 +62,33 @@ export class Payment extends Typegoose {
   ]
   all values must add up to 100
   */
-  @arrayProp({ itemsRef: Split })
+  @arrayProp({ items: Split })
   @JsonProperty()
-  splits?: Ref<Split>[];
+  splits?: Split[];
 
   @instanceMethod
   isPendingSplitPayment() {
 
-    //Iterate through each split payment.
+    //Iterate through each split payment. 
 
+    return true;
+  }
 
+  @instanceMethod
+  getSplitTotal() {
+    //Iterate through the splits. If it doesn't add to 1, it is invalid
+    return this.splits.reduce((acc: number, curr: Split) => {
+      return acc + curr.percentSplit;
+    }, 0);
+  }
+
+  @instanceMethod
+  isSplitsValid() {
+    if (this.getSplitTotal() !== 1) {
+      return false;
+    }
+
+    return true;
   }
 }
 

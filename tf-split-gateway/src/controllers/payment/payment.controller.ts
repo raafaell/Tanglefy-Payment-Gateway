@@ -52,7 +52,7 @@ export class PaymentController {
    * Once the payment has been made, user informs gateway, 
    * and gateway confirms payment has been made
    */
-  @Get('/confirmPayment')
+  @Post('/confirmPayment')
   async confirmPayment(
     @Required() @QueryParams('payment_id') paymentId: string,
     @Required() @QueryParams('bundle_id') bundleId: string,
@@ -66,7 +66,7 @@ export class PaymentController {
     await this.paymentService.save(payment);
 
     //trigger the update payment state
-    this.paymentService.onUpdatePaymentState({id: paymentId});
+    this.paymentService.checkPaymentState({id: paymentId});
 
 
     // //TODO: in this call, set the bundleId for the intitial payment

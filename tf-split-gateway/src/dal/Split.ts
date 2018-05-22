@@ -1,4 +1,4 @@
-import { Typegoose, prop } from "typegoose";
+import { Typegoose, prop, staticMethod } from "typegoose";
 import { SplitPaymentState } from "../types/payment";
 import { JsonProperty } from "ts-express-decorators";
 
@@ -24,7 +24,8 @@ export class Split extends Typegoose {
   @JsonProperty()
   address: string;
 
-  @prop({ required: true })
+  @prop({ })
   @JsonProperty()
-  bundleId: string;
+  bundleId?: string;
+  
 }

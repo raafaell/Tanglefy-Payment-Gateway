@@ -11,6 +11,8 @@ import { MongoErrorCode } from '../../types/mongo';
 import { ApiError } from '../../utils/error';
 import { UnexpectedError } from '../../utils/error/UnexpectedError';
 import { Request, Response, NextFunction } from 'express';
+import { PaymentState } from '../../types/payment';
+import { IotaPaymentDto } from './iota.dto';
 
 
 @Service() 
@@ -37,15 +39,28 @@ export class IotaService {
   }
 
   /**
-   * checkInitialPaymentStatus
+   * checkPaymentStatus
    * 
-   * Checks the status of the initial payment on the tangle.
+   * Checks the status of a payment on the tangle. Not 100% sure about
+   * which fields we will need
+   * 
+   * TODO: make generic for any type of payment
    */
-  async checkInitialPaymentStatus({bundleId, address}) {
+  async checkPaymentStatus({bundleId, address, expectedAmount}): Promise<PaymentState> {
 
-    //TODO: set some sort of threshold somewhere.
-    return false;
+    //TODO: set some sort of threshold of confirmations somewhere.
+    return PaymentState.split_pending;
   }
 
 
+  /**
+   * Make a payment
+   * 
+   */
+  async handlePayment({address, value, }): Promise<IotaPaymentDto> {
+
+    return {
+      bundleId: "bundleId",
+    };
+  }
 }

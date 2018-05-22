@@ -18,7 +18,7 @@ curl -X POST \
 #called after making payment
 PAYMENT_ID=5b0228c6773e5b4887ef979a
 BUNDLE_ID="12345"
-curl -X GET "http://0.0.0.0:3000/v1/payment/confirmPayment?payment_id=$PAYMENT_ID&bundle_id=$BUNDLE_ID"
+curl -X POST "http://0.0.0.0:3000/v1/payment/confirmPayment?payment_id=$PAYMENT_ID&bundle_id=$BUNDLE_ID"
 
 
 #getPaymentState
@@ -46,6 +46,8 @@ show collections
 
 #list all
 db.getCollection('payments').find().pretty()
+
+db.getCollection('payments').drop()
 
 ```
 
