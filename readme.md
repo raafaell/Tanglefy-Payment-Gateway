@@ -1,5 +1,5 @@
 # Tanglefy
-Tanglefy is an Open-Source Peer-to-Peer eCommerce Powered by IOTA
+Open-Source Peer-to-Peer eCommerce Powered by **IOTA**
 
 
 
