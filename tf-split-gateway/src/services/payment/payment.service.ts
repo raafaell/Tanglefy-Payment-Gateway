@@ -59,7 +59,6 @@ export class PaymentService {
     //TODO: handle this like a state machine with nice hooks?
 
     switch (payment.state) {
-
       case PaymentState.split_pending: {
         console.log("Payment moved to split_pending. Initiating split payments");
         
@@ -85,6 +84,9 @@ export class PaymentService {
 
       case PaymentState.split_unverified: {
         console.log("Payment moved to split_unverified. TODO: start pinging tangle to check on payment status");
+
+        //TODO: schedule a notification? How do we handle this nicely? Perhaps with rabbit mq?
+        //eg: https://www.rabbitmq.com/tutorials/tutorial-one-javascript.html
 
         break;
       }
