@@ -104,4 +104,20 @@ export class PaymentController {
 
     return { state: payment.state };
   }
+
+  /**
+   * Trigger to check for pending transactions, and update
+   * 
+   * TODO: make admin authentication only
+   */
+  @Get('/triggerCheckPaymentStates')
+  async triggerCheckPaymentStates(
+    @Req() req: IAppRequest): Promise<any> {
+
+      //TODO: look through all pending payments (maybe save ids in redis?), and check the state for each.
+      
+
+      return true;
+  }
+
 }

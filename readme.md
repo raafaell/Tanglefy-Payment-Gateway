@@ -13,3 +13,5 @@ PayApi is a client side library which communicates with the Split Gateway and th
 
 Split Gateway is the web service Tanglefy uses to verify, route and split transactions from the PayApi.
 
+
+[More information](./tf-split-gateway/README.md)

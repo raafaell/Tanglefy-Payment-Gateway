@@ -13,6 +13,7 @@ dotenv.config({ path: '.env' });
 import { ServerLoader, ServerSettings, GlobalAcceptMimesMiddleware } from 'ts-express-decorators';
 import { $log } from 'ts-log-debug';
 import { MongooseService } from './services/shared/mongoose.service';
+import { RedisService } from './services/shared/redis.service';
 
 const rootDir = Path.resolve(__dirname);
 @ServerSettings({
@@ -54,6 +55,7 @@ export class Server extends ServerLoader {
 
     async $onInit(): Promise<any> {
         await MongooseService.connect();
+        await RedisService.connect();
         $log.debug('DB connected');
     }
 

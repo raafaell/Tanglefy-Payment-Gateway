@@ -9,6 +9,7 @@ import { PaymentRepositoryToken } from "../../dal/token-constants";
 import { InitialPaymentStates, PaymentState, SplitPaymentState } from "../../types/payment";
 import { Split } from "../../dal/Split";
 import { IotaService } from "../iota/iota.service";
+import { RedisService } from "../shared/redis.service";
 
 
 @Service() 
@@ -16,6 +17,7 @@ export class PaymentService {
   constructor(
     @Inject(PaymentRepositoryToken) private paymentRepository: PaymentRepository,
     private iotaService: IotaService,
+    private redisService: RedisService,
   ) {
 
   }
