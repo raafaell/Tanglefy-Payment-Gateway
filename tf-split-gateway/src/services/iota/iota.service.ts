@@ -11,8 +11,9 @@ import { MongoErrorCode } from '../../types/mongo';
 import { ApiError } from '../../utils/error';
 import { UnexpectedError } from '../../utils/error/UnexpectedError';
 import { Request, Response, NextFunction } from 'express';
-import { PaymentState } from '../../types/payment';
+import { PaymentState, SplitPaymentState } from '../../types/payment';
 import { IotaPaymentDto } from './iota.dto';
+import { Split } from '../../dal/Split';
 
 
 @Service() 
@@ -50,6 +51,19 @@ export class IotaService {
 
     //TODO: set some sort of threshold of confirmations somewhere.
     return PaymentState.split_pending;
+  }
+
+
+  /**
+   * checkSplitPaymentStatus
+   * 
+   * Check the status for an outgoing payment on the tangle.
+   * 
+   */
+  async checkSplitPaymentStatus({bundleId, address, expectedAmount}): Promise<SplitPaymentState> {
+
+    //TODO: actually check the status on the tangle
+    return SplitPaymentState.complete;
   }
 
 

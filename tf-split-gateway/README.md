@@ -24,6 +24,11 @@ Refer to http://0.0.0.0:3000/api-docs to see the swagger documentation for the s
 
 ## TODO:
 
+[] work on Iota Api connector
+  [] checkSplitPaymentStatus
+  [] handlePayment
+  [] checkPaymentStatus
+
 [] start writing tests!
 [] deploy development environment - maybe on Heroku?
 [] set up CI for development environment (travis?)
