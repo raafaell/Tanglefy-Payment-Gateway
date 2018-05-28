@@ -4,7 +4,7 @@ import { UnexpectedError } from "../../utils/error/UnexpectedError";
 import { MongoErrorCode } from "../../types/mongo";
 import { API_ERRORS } from "../../types/app.errors";
 import { ApiError } from "../../utils/error";
-import { PaymentRepository, PaymentInstance } from "../../dal/Payment";
+import { PaymentRepository, PaymentInstance, Payment } from "../../dal/Payment";
 import { PaymentRepositoryToken } from "../../dal/token-constants";
 import { InitialPaymentStates, PaymentState, SplitPaymentState } from "../../types/payment";
 import { Split } from "../../dal/Split";
@@ -26,7 +26,36 @@ export class PaymentService {
     return await this.paymentRepository.findById(id);
   }
 
+  /**
+   * Get all pending payments from Redis, and update state
+   * 
+   * 
+   */
+  async checkPaymentStates() {
+    const pending = await RedisService.getPendingTx();
+
+    console.log("pending payments are: ", pending);
+
+    pending.forEach(async (id) => {
+      const newState = await this.checkPaymentState({id});
+
+      const pendingStates = [
+        PaymentState.pending,
+        PaymentState.unverified,
+        PaymentState.split_pending,
+        PaymentState.split_unverified
+      ];
+
+      //Remove from the pending txs if necessary
+      if (pendingStates.indexOf(newState) === -1) {
+        console.log("[checkPaymentStates] removing payment from redis as it is no longer pending");
+        RedisService.deletePendingTx(id);
+      }
+    });
+  }
+
   async checkPaymentState({id}): Promise<PaymentState> {
+    console.log("checkPaymentState for id:", id);
     const payment = await this.getPaymentById({id});
     const oldState = payment.state;
 
@@ -42,25 +71,33 @@ export class PaymentService {
       });
 
       await payment.save();
-      await this.handleEnterState({ payment, oldState});
+      await this.handleEnterState(payment, oldState);
     }
 
-    //TODO: implement check state for split transactions
-    // if (payment.isPendingSplitPayment()) {
-    //   //We have initiated the split payment, but it hasn't been confirmed
-    //   //TODO: check payment state and update for each
-    //   payment.splits.forEach(split => {
-    //     if ()
-    //   });
-    // }
+    //TODO: check payment state for splits
+    if (payment.state === PaymentState.split_unverified) {
+      console.log('[TODO] state is split_unverified, checking split tx states');
+    }
 
     return payment.state;
   }
 
-  async handleEnterState({ payment, oldState }) {
-    //TODO: handle this like a state machine with nice hooks?
+  async handleEnterState(payment:PaymentInstance, oldState: PaymentState) {
+    if (payment.state === oldState) {
+      console.log(`[WARNING] tried to transition between the same state: ${oldState} -> ${payment.state}. This won't be handled.`);
+    }
+
+    //TODO: handle state transitions, not just current state.
 
     switch (payment.state) {
+      
+      case PaymentState.pending: {
+        console.log("payment.service: handleEnterState, payment is pending");
+        RedisService.addPendingTx(payment.id);
+
+        break;
+      }
+
       case PaymentState.split_pending: {
         console.log("Payment moved to split_pending. Initiating split payments");
         
@@ -79,16 +116,14 @@ export class PaymentService {
         //do only if the above is successful:
         payment.state = PaymentState.split_unverified;
         await payment.save();
-        await this.handleEnterState({ payment, oldState: PaymentState.split_pending });
+        await this.handleEnterState(payment, PaymentState.split_pending);
 
         break;
       }
 
       case PaymentState.split_unverified: {
-        console.log("Payment moved to split_unverified. TODO: start pinging tangle to check on payment status");
-
-        //TODO: schedule a notification? How do we handle this nicely? Perhaps with rabbit mq?
-        //eg: https://www.rabbitmq.com/tutorials/tutorial-one-javascript.html
+        //Add to Redis as a pending tx:
+        RedisService.addPendingTx(payment.id);
 
         break;
       }
@@ -98,7 +133,7 @@ export class PaymentService {
     }
   }
 
-  async save(payment) {
+  async save(payment): Promise<PaymentInstance> {
     return await payment.save();
   }
 
@@ -114,6 +149,10 @@ export class PaymentService {
 
 
     const payment = new this.paymentRepository({ ...profile, splits });
-    return await payment.save();
+    const savedPayment = await this.save(payment);
+
+    this.handleEnterState(savedPayment, null);
+
+    return savedPayment;
   }
 }

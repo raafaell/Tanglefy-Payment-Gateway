@@ -16,7 +16,7 @@ curl -X POST \
 
 #confirmPayment
 #called after making payment
-PAYMENT_ID=5b0228c6773e5b4887ef979a
+PAYMENT_ID=5b0b72878f23072573d5d56e
 BUNDLE_ID="12345"
 curl -X POST "http://0.0.0.0:3000/v1/payment/confirmPayment?payment_id=$PAYMENT_ID&bundle_id=$BUNDLE_ID"
 
@@ -25,6 +25,11 @@ curl -X POST "http://0.0.0.0:3000/v1/payment/confirmPayment?payment_id=$PAYMENT_
 #called at any stage. Use this to update UI when the payment has actually happened
 PAYMENT_ID=5b0228c6773e5b4887ef979a
 curl -X GET "http://0.0.0.0:3000/v1/payment/paymentState?payment_id=$PAYMENT_ID"
+
+
+#triggerCheckPaymentStates
+#called by a cron job every 30 seconds or so
+curl -X GET "http://0.0.0.0:3000/v1/payment/triggerCheckPaymentStates"
 
 ```
 
@@ -49,6 +54,12 @@ db.getCollection('payments').find().pretty()
 
 db.getCollection('payments').drop()
 
+```
+
+## Redis Reference:
+
+```
+docker exec -it redis redis-cli
 ```
 
 

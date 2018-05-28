@@ -17,7 +17,8 @@ import { API_ERRORS } from '../types/app.errors';
   const payment = this;
 
   if (!payment.state) {
-    payment.state = PaymentState.new;
+    //default to pending - waiting for user to pay
+    payment.state = PaymentState.pending;
   }
 
   next();

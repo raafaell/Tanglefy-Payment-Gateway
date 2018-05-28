@@ -63,10 +63,11 @@ export class PaymentController {
 
     let payment: PaymentInstance = await this.paymentService.getPaymentById({id: paymentId});
     payment.initialPaymentBundleId = bundleId;
+    const oldState = payment.state;
+    payment.state = PaymentState.pending;
+    this.paymentService.handleEnterState(payment, oldState);
+    
     await this.paymentService.save(payment);
-
-    //trigger the update payment state
-    this.paymentService.checkPaymentState({id: paymentId});
 
 
     // //TODO: in this call, set the bundleId for the intitial payment
@@ -115,7 +116,7 @@ export class PaymentController {
     @Req() req: IAppRequest): Promise<any> {
 
       //TODO: look through all pending payments (maybe save ids in redis?), and check the state for each.
-      
+      this.paymentService.checkPaymentStates();      
 
       return true;
   }

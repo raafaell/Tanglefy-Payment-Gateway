@@ -1,16 +1,16 @@
 export enum PaymentState {
-  new='new',
   //Waiting for payment
   pending='pending',
   //Buyer claims to have made payment
   unverified='unverified',
+  //Waiting for split payments to complete
   split_pending='split_pending',
+  //split payments are claimed to be complete
   split_unverified='split_unverified',
   complete='complete',
 }
 
 export const InitialPaymentStates = [
-  PaymentState.new,
   PaymentState.pending,
   PaymentState.unverified,
 ];

@@ -9,7 +9,7 @@
   "author": "Dima Grossman",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon",
+    "start": "docker-compose up -d && nodemon",
     "prestart:prod": "npm run build",
     "start:prod": "NODE_ENV=production node dist/server.js",
     "build": "tsc && npm run tslint",
