@@ -1,4 +1,4 @@
-# Tanglefy
+# Tanglefy Payment Gateway
 Open-Source Peer-to-Peer eCommerce Powered by **IOTA**
 
 
@@ -15,3 +15,4 @@ Split Gateway is the web service Tanglefy uses to verify, route and split transa
 
 
 [More information](./tf-split-gateway/README.md)
+

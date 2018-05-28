@@ -64,9 +64,9 @@ export class PaymentController {
     let payment: PaymentInstance = await this.paymentService.getPaymentById({id: paymentId});
     payment.initialPaymentBundleId = bundleId;
     const oldState = payment.state;
-    payment.state = PaymentState.pending;
+    payment.state = PaymentState.unverified;
     this.paymentService.handleEnterState(payment, oldState);
-    
+
     await this.paymentService.save(payment);
 
 

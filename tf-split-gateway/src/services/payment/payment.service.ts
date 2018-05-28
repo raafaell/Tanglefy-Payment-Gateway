@@ -59,11 +59,14 @@ export class PaymentService {
     const payment = await this.getPaymentById({id});
     const oldState = payment.state;
 
-    if (InitialPaymentStates.indexOf(payment.state) > -1 &&
-      payment.initialPaymentBundleId) {
-      //The user claims to have made the payment, 
-      //but last time we checked, it wasn't confirmed
+    //Payment is waiting for user
+    if (payment.state === PaymentState.pending) {
+      //Do nothing, as we need user to let us know the details of the tx.
+      console.log("[checkPaymentState], payment is PENDING.");
+    }
 
+    //User claims to have made payment, we haven't yet confirmed
+    if (payment.state === PaymentState.unverified) {
       payment.state = await this.iotaService.checkPaymentStatus({
         bundleId: payment.initialPaymentBundleId,
         address: payment.address,
@@ -90,7 +93,7 @@ export class PaymentService {
     //TODO: handle state transitions, not just current state.
 
     switch (payment.state) {
-      
+
       case PaymentState.pending: {
         console.log("payment.service: handleEnterState, payment is pending");
         RedisService.addPendingTx(payment.id);
