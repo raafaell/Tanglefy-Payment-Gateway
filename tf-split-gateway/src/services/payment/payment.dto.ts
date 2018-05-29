@@ -4,6 +4,7 @@ import { JsonProperty } from 'ts-express-decorators';
 export interface CreatePaymentDto {
   address: string;
   apiKey: string;
+  value: number; //in iota
 }
 
 export class StartPaymentDto {

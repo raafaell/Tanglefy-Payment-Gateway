@@ -10,12 +10,6 @@ export enum PaymentState {
   complete='complete',
 }
 
-export const InitialPaymentStates = [
-  PaymentState.pending,
-  PaymentState.unverified,
-];
-
-
 //Keep track of the state of sub or split payments within the
 //larger payment
 export enum SplitPaymentState {

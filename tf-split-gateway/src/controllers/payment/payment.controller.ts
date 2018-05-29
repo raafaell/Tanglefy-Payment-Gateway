@@ -42,7 +42,7 @@ export class PaymentController {
     //get a new address
     const address = await this.iotaService.getNewAddress();
     //create a new Payment, with the state set to 'Pending'
-    const payment = await this.paymentService.createPayment({address, apiKey: body.apiKey });
+    const payment = await this.paymentService.createPayment({address, ...body});
 
     res.json(payment);
   }
@@ -68,20 +68,6 @@ export class PaymentController {
     this.paymentService.handleEnterState(payment, oldState);
 
     await this.paymentService.save(payment);
-
-
-    // //TODO: in this call, set the bundleId for the intitial payment
-    // const status = await this.iotaService.checkInitialPaymentStatus({address: payment.address, bundleId });
-
-    // //Update the state to 
-    // if (status) {
-    //   payment = await this.paymentService.updatePaymentState({id: paymentId, state: PaymentState.split_pending});
-    // }
-
-    //TODO: lookup the payment ID in 
-    //      confirm tx on tangle
-    //      update state
-    //      initiate split
     
     return null;
   }

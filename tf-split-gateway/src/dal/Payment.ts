@@ -1,6 +1,6 @@
 import { InjectorService, JsonProperty } from 'ts-express-decorators';
 import { prop, InstanceType, Typegoose, pre, ModelType, instanceMethod, arrayProp, Ref } from "typegoose";
-import { PaymentState, InitialPaymentStates } from "../types/payment";
+import { PaymentState } from "../types/payment";
 import { User } from './User';
 import { PaymentRepositoryToken } from './token-constants';
 import { Split } from './Split';

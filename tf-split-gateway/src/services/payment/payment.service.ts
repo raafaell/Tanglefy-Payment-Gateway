@@ -6,7 +6,7 @@ import { API_ERRORS } from "../../types/app.errors";
 import { ApiError } from "../../utils/error";
 import { PaymentRepository, PaymentInstance, Payment } from "../../dal/Payment";
 import { PaymentRepositoryToken } from "../../dal/token-constants";
-import { InitialPaymentStates, PaymentState, SplitPaymentState } from "../../types/payment";
+import { PaymentState, SplitPaymentState } from "../../types/payment";
 import { Split } from "../../dal/Split";
 import { IotaService } from "../iota/iota.service";
 import { RedisService } from "../shared/redis.service";
@@ -174,7 +174,7 @@ export class PaymentService {
   }
 
   async createPayment(profile: CreatePaymentDto): Promise<PaymentInstance> {
-    //TODO: validate?
+    //TODO: validate
 
     //TODO: initialize the splits based on the api key, including:
     // - split percentage, unique address for the tangelfy and seller wallets

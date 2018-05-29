@@ -22,9 +22,7 @@ export class IotaService {
   seed: string = process.env.PG_SEED;
   provider: string = process.env.IOTA_PROVIDER;
 
-
   constructor() {
-
     this.iota = new IOTA({ provider: this.provider });
     bluebird.promisifyAll(this.iota.api);
   }
@@ -71,7 +69,7 @@ export class IotaService {
    * Make a payment
    * 
    */
-  async handlePayment({address, value, }): Promise<IotaPaymentDto> {
+  async handlePayment({address, value}): Promise<IotaPaymentDto> {
 
     return {
       bundleId: "bundleId",

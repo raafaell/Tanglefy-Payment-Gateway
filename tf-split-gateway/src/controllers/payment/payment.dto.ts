@@ -8,4 +8,8 @@ export class StartPaymentRequestDto {
   @Required()
   apiKey: string;
 
+  @JsonProperty()
+  @Required()
+  value: number;
+
 }
