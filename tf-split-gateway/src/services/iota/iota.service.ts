@@ -39,11 +39,22 @@ export class IotaService {
    * @param expectedAmount - Number: the expected amount of the payment, in i
    */
   async checkPaymentStatus({txHash, address, expectedAmount}): Promise<PaymentState> {
+    const transactions = await this.iota.api.getTransactionsObjectsAsync([txHash]);
+    
+    if (!transactions || !transactions[0]) {
+      //Transaction not found, return unverified
+      return PaymentState.unverified;
+    }
 
-    const transactions = await this.iota.api.getTransactionObjectsAsync([txHash]);
-    console.log("transactions are:", transactions);
+    const tx = transactions[0];
+    if (tx.value !== expectedAmount) {
+      return PaymentState.unverified;
+    }
 
-
+    if (tx.address !== address) {
+      return PaymentState.unverified;
+    }
+    
     //TODO: set some sort of threshold of confirmations somewhere.
     return PaymentState.split_pending;
   }

@@ -14,6 +14,7 @@
     "start:prod": "NODE_ENV=production node dist/server.js",
     "build": "tsc && npm run tslint",
     "test": "jest --forceExit",
+    "test-watch": "jest --watch",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
     "path": "tspath"
   },
