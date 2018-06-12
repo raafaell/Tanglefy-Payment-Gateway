@@ -56,6 +56,10 @@ export class Payment extends Typegoose {
   @JsonProperty()
   initialPaymentBundleId: string;
 
+  @prop({})
+  @JsonProperty()
+  initialPaymentTxHash: string;
+
   /*An arrray containing the split definition, eg:
   [ 
     {split: 95, address:0x000},

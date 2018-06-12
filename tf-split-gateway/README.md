@@ -29,8 +29,12 @@ Refer to http://0.0.0.0:3000/api-docs to see the swagger documentation for the s
   [] handlePayment
   [] checkPaymentStatus
 
-[] start writing tests!
+[] set up and start writing unit tests!
+[] set up and write integration tests
 [] deploy development environment - maybe on Heroku?
 [] set up CI for development environment (travis?)
+
+
+Don't know how important these are for initial version:
 [] integrate 3rd party user login and auth (maybe Firebase)
 [] define and implement ApiKey

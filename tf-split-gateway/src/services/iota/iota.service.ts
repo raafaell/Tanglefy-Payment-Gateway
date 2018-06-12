@@ -1,19 +1,9 @@
-import * as jwt from 'jsonwebtoken';
-import * as moment from 'moment';
 import * as IOTA from 'iota.lib.js';
 import * as bluebird from 'bluebird';
 
-import { Inject, Service } from 'ts-express-decorators';
-import { UserRepositoryToken } from '../../dal/token-constants';
-import { AuthProviderEnum, UserInstance, UserRepository } from '../../dal/User';
-import { API_ERRORS } from '../../types/app.errors';
-import { MongoErrorCode } from '../../types/mongo';
-import { ApiError } from '../../utils/error';
-import { UnexpectedError } from '../../utils/error/UnexpectedError';
-import { Request, Response, NextFunction } from 'express';
+import { Service } from 'ts-express-decorators';
 import { PaymentState, SplitPaymentState } from '../../types/payment';
 import { IotaPaymentDto } from './iota.dto';
-import { Split } from '../../dal/Split';
 
 
 @Service() 
@@ -44,8 +34,15 @@ export class IotaService {
    * which fields we will need
    * 
    * TODO: make generic for any type of payment
+   * @param txHash - String: the id of the bundle containing the payment
+   * @param address - String: the destination address the payment has been made to
+   * @param expectedAmount - Number: the expected amount of the payment, in i
    */
-  async checkPaymentStatus({bundleId, address, expectedAmount}): Promise<PaymentState> {
+  async checkPaymentStatus({txHash, address, expectedAmount}): Promise<PaymentState> {
+
+    const transactions = await this.iota.api.getTransactionObjectsAsync([txHash]);
+    console.log("transactions are:", transactions);
+
 
     //TODO: set some sort of threshold of confirmations somewhere.
     return PaymentState.split_pending;

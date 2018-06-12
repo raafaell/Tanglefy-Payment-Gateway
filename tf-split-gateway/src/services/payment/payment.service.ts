@@ -71,7 +71,7 @@ export class PaymentService {
     if (payment.state === PaymentState.unverified) {
       console.log("[checkPaymentState], payment is UNVERIFIED.");
       payment.state = await this.iotaService.checkPaymentStatus({
-        bundleId: payment.initialPaymentBundleId,
+        txHash: payment.initialPaymentTxHash,
         address: payment.address,
         expectedAmount: 0,
       });
