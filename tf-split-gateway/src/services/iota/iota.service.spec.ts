@@ -6,7 +6,7 @@ import { PaymentState } from "../../types/payment";
 //TODO: configure this nicely for tests
 dotenv.config({ path: '.env' });
 
-
+jest.setTimeout(process.env.DEFAULT_TIMEOUT_INTERVAL);
 
 describe('IotaService', () => {
   let service: IotaService;
@@ -33,12 +33,30 @@ describe('IotaService', () => {
         expectedAmount: 1
       });
 
-      console.log("result", result);
-
       expect(result).toBe(PaymentState.split_pending);
     });
 
-    //returns a PaymentState of unverified when the initital payment is incomplete
+    it('returns a PaymentState of unverified when the payment amount is wrong', async () => {
+      const result = await service.checkPaymentStatus({
+        txHash: 'A9GZPTFJDBQIMZGADSGVLUBDLQYFRSCMBWTMSQZKIWSYWJ9GILDZJVBXXUNXUTVJOPVJZRLYYSYRZ9999',
+        address: 'BJSLSJNPWSM9QLO9JYJAG9A9LLAUKZAQJGYZLNN9YMBNPCUUS9E9EYE9PIKIKNYHXAPNFAMDGXVIPVKIW',
+        expectedAmount: 2
+      });
+
+      expect(result).toBe(PaymentState.unverified);
+    });
+
+    it('returns a PaymentState of unverified when the initital payment is incomplete', async () => {
+      const result = await service.checkPaymentStatus({
+        txHash: 'B9GZPTFJDBQIMZGADSGVLUBDLQYFRSCMBWTMSQZKIWSYWJ9GILDZJVBXXUNXUTVJOPVJZRLYYSYRZ9999',
+        address: 'BJSLSJNPWSM9QLO9JYJAG9A9LLAUKZAQJGYZLNN9YMBNPCUUS9E9EYE9PIKIKNYHXAPNFAMDGXVIPVKIW',
+        expectedAmount: 1
+      });
+
+      expect(result).toBe(PaymentState.unverified);
+    });
+
+    
 
   });
 

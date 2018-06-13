@@ -40,13 +40,20 @@ export class IotaService {
    */
   async checkPaymentStatus({txHash, address, expectedAmount}): Promise<PaymentState> {
     const transactions = await this.iota.api.getTransactionsObjectsAsync([txHash]);
-    
+    const inclusionStates = await this.iota.api.getLatestInclusionAsync([txHash]);
+
     if (!transactions || !transactions[0]) {
       //Transaction not found, return unverified
       return PaymentState.unverified;
     }
 
+    if (!inclusionStates || inclusionStates[0] === null) {
+      return PaymentState.unverified;
+    }
+
     const tx = transactions[0];
+    const inclusionState = inclusionStates[0];
+
     if (tx.value !== expectedAmount) {
       return PaymentState.unverified;
     }
@@ -54,8 +61,12 @@ export class IotaService {
     if (tx.address !== address) {
       return PaymentState.unverified;
     }
+
+    if (inclusionState === false) {
+      // ref: https://iota.stackexchange.com/questions/1160/how-does-the-iota-wallet-determine-confirmed-transactions
+      return PaymentState.unverified;
+    }
     
-    //TODO: set some sort of threshold of confirmations somewhere.
     return PaymentState.split_pending;
   }
 
