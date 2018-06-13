@@ -26,38 +26,62 @@ describe('IotaService', () => {
   */
   describe('Live tests', () => {
 
-    it('returns a PaymentState of split_pending when the initial payment is complete', async () => {
-      const result = await service.checkPaymentStatus({
-        txHash: 'A9GZPTFJDBQIMZGADSGVLUBDLQYFRSCMBWTMSQZKIWSYWJ9GILDZJVBXXUNXUTVJOPVJZRLYYSYRZ9999',
-        address: 'BJSLSJNPWSM9QLO9JYJAG9A9LLAUKZAQJGYZLNN9YMBNPCUUS9E9EYE9PIKIKNYHXAPNFAMDGXVIPVKIW',
-        expectedAmount: 1
+    describe('checkPaymentStatus', () => {
+      it('returns a PaymentState of split_pending when the initial payment is complete', async () => {
+        const result = await service.checkPaymentStatus({
+          txHash: 'A9GZPTFJDBQIMZGADSGVLUBDLQYFRSCMBWTMSQZKIWSYWJ9GILDZJVBXXUNXUTVJOPVJZRLYYSYRZ9999',
+          address: 'BJSLSJNPWSM9QLO9JYJAG9A9LLAUKZAQJGYZLNN9YMBNPCUUS9E9EYE9PIKIKNYHXAPNFAMDGXVIPVKIW',
+          expectedAmount: 1
+        });
+
+        expect(result).toBe(PaymentState.split_pending);
       });
 
-      expect(result).toBe(PaymentState.split_pending);
-    });
+      it('returns a PaymentState of unverified when the payment amount is wrong', async () => {
+        const result = await service.checkPaymentStatus({
+          txHash: 'A9GZPTFJDBQIMZGADSGVLUBDLQYFRSCMBWTMSQZKIWSYWJ9GILDZJVBXXUNXUTVJOPVJZRLYYSYRZ9999',
+          address: 'BJSLSJNPWSM9QLO9JYJAG9A9LLAUKZAQJGYZLNN9YMBNPCUUS9E9EYE9PIKIKNYHXAPNFAMDGXVIPVKIW',
+          expectedAmount: 2
+        });
 
-    it('returns a PaymentState of unverified when the payment amount is wrong', async () => {
-      const result = await service.checkPaymentStatus({
-        txHash: 'A9GZPTFJDBQIMZGADSGVLUBDLQYFRSCMBWTMSQZKIWSYWJ9GILDZJVBXXUNXUTVJOPVJZRLYYSYRZ9999',
-        address: 'BJSLSJNPWSM9QLO9JYJAG9A9LLAUKZAQJGYZLNN9YMBNPCUUS9E9EYE9PIKIKNYHXAPNFAMDGXVIPVKIW',
-        expectedAmount: 2
+        expect(result).toBe(PaymentState.unverified);
       });
 
-      expect(result).toBe(PaymentState.unverified);
-    });
+      it('returns a PaymentState of unverified when the initital payment is incomplete', async () => {
+        const result = await service.checkPaymentStatus({
+          txHash: 'B9GZPTFJDBQIMZGADSGVLUBDLQYFRSCMBWTMSQZKIWSYWJ9GILDZJVBXXUNXUTVJOPVJZRLYYSYRZ9999',
+          address: 'BJSLSJNPWSM9QLO9JYJAG9A9LLAUKZAQJGYZLNN9YMBNPCUUS9E9EYE9PIKIKNYHXAPNFAMDGXVIPVKIW',
+          expectedAmount: 1
+        });
 
-    it('returns a PaymentState of unverified when the initital payment is incomplete', async () => {
-      const result = await service.checkPaymentStatus({
-        txHash: 'B9GZPTFJDBQIMZGADSGVLUBDLQYFRSCMBWTMSQZKIWSYWJ9GILDZJVBXXUNXUTVJOPVJZRLYYSYRZ9999',
-        address: 'BJSLSJNPWSM9QLO9JYJAG9A9LLAUKZAQJGYZLNN9YMBNPCUUS9E9EYE9PIKIKNYHXAPNFAMDGXVIPVKIW',
-        expectedAmount: 1
+        expect(result).toBe(PaymentState.unverified);
       });
-
-      expect(result).toBe(PaymentState.unverified);
     });
 
-    
+    describe('checkSplitPaymentStatus', () => {
 
+      it('returns a PaymentState of complete when the initial payment is complete', async () => {
+        const result = await service.checkSplitPaymentStatus({
+          txHash: 'A9GZPTFJDBQIMZGADSGVLUBDLQYFRSCMBWTMSQZKIWSYWJ9GILDZJVBXXUNXUTVJOPVJZRLYYSYRZ9999',
+          address: 'BJSLSJNPWSM9QLO9JYJAG9A9LLAUKZAQJGYZLNN9YMBNPCUUS9E9EYE9PIKIKNYHXAPNFAMDGXVIPVKIW',
+          expectedAmount: 1
+        });
+
+        expect(result).toBe(PaymentState.split_pending);
+      });
+    });
+
+    describe('handlePayment', () => {
+      it('makes the payment on the tangle', async () => {
+        const result = await service.handlePayment({
+          address: 'BJSLSJNPWSM9QLO9JYJAG9A9LLAUKZAQJGYZLNN9YMBNPCUUS9E9EYE9PIKIKNYHXAPNFAMDGXVIPVKIW',
+          value: 0
+        });
+
+        console.log(result);
+
+      }, 60 * 1000);
+    });
   });
 
   it('checks the payment ', () => {

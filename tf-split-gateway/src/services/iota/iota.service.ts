@@ -75,11 +75,38 @@ export class IotaService {
    * checkSplitPaymentStatus
    * 
    * Check the status for an outgoing payment on the tangle.
-   * 
+   * TODO: refactor with above
    */
-  async checkSplitPaymentStatus({bundleId, address, expectedAmount}): Promise<SplitPaymentState> {
+  async checkSplitPaymentStatus({ txHash, address, expectedAmount}): Promise<SplitPaymentState> {
 
-    //TODO: actually check the status on the tangle
+    const transactions = await this.iota.api.getTransactionsObjectsAsync([txHash]);
+    const inclusionStates = await this.iota.api.getLatestInclusionAsync([txHash]);
+
+    if (!transactions || !transactions[0]) {
+      //Transaction not found, return unverified
+      return SplitPaymentState.unverified;
+    }
+
+    if (!inclusionStates || inclusionStates[0] === null) {
+      return SplitPaymentState.unverified;
+    }
+
+    const tx = transactions[0];
+    const inclusionState = inclusionStates[0];
+
+    if (tx.value !== expectedAmount) {
+      return SplitPaymentState.unverified;
+    }
+
+    if (tx.address !== address) {
+      return SplitPaymentState.unverified;
+    }
+
+    if (inclusionState === false) {
+      // ref: https://iota.stackexchange.com/questions/1160/how-does-the-iota-wallet-determine-confirmed-transactions
+      return SplitPaymentState.unverified;
+    }
+
     return SplitPaymentState.complete;
   }
 
@@ -90,6 +117,20 @@ export class IotaService {
    */
   async handlePayment({address, value}): Promise<IotaPaymentDto> {
 
+    const transfers = [{
+      address,
+      value
+    }];
+
+    const result = await this.iota.api.sendTransferAsync(
+      this.seed,
+      14,
+      14,
+      transfers,
+    );
+
+    console.log("transfer result", result);
+    
     return {
       bundleId: "bundleId",
     };
