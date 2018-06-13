@@ -129,10 +129,11 @@ export class IotaService {
       transfers,
     );
 
-    console.log("transfer result", result);
-    
+    //TODO: handle failure cases here?
+    const transaction = result[0];
     return {
-      bundleId: "bundleId",
+      txHash: transaction.hash,
+      bundleId: transaction.bundle,
     };
   }
 }
